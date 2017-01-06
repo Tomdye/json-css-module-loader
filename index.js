@@ -1,6 +1,8 @@
 module.exports = function(source, sourceMap) {
 	var fileName = this.resourcePath;
-	var cssFileName = this.resourcePath.replace(/.styl.json$/, '.css');
+	// Remove the .json ext, will be .css / .scss  / .styl etc... now
+	// to be picked up by other loaders
+	var cssFileName = this.resourcePath.replace(/.json$/, '');
 
 	this.cacheable && this.cacheable();
 	var value = typeof source === "string" ? JSON.parse(source) : source;
