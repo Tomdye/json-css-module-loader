@@ -1,14 +1,30 @@
+const path = require('path');
+const JSON_EXT = '.json';
+
 module.exports = function(source, sourceMap) {
-	var fileName = this.resourcePath;
-	// Remove the .json ext, will be .css / .scss  / .styl etc... now
-	// to be picked up by other loaders
-	var cssFileName = this.resourcePath.replace(/.json$/, '');
+	const fileName = this.resourcePath;
+	const ext = path.extname(fileName);
+	let outputSource;
+	let value;
+
+	if (ext === JSON_EXT) {
+		value = typeof source === "string" ? JSON.parse(source) : source;
+		outputSource = JSON.stringify(value);
+
+	} else {
+		value = source;
+		outputSource = value;
+	}
+
+	// Remove the extension, will be .css / .scss  / .styl etc...
+	// now to be picked up by other loaders
+	const extRegExp = new RegExp(ext + '$');
+	const cssFileName = this.resourcePath.replace(extRegExp, '.css');
 
 	this.cacheable && this.cacheable();
-	var value = typeof source === "string" ? JSON.parse(source) : source;
-	this.value = [value];
+	this.value = [ value ];
 
-	var output = `require('${cssFileName}');\nmodule.exports =  ${JSON.stringify(value)} ;`;
+	var output = `require('${cssFileName}');\n${outputSource};`;
 
 	return output;
 }
