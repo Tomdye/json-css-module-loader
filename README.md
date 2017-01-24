@@ -24,4 +24,6 @@ module: {
 
 ## License
 
+This loader is adapted from the [`json-loader`](https://github.com/webpack/json-loader);
+
 MIT (http://www.opensource.org/licenses/mit-license.php)

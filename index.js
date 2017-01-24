@@ -3,23 +3,28 @@ const JSON_EXT = '.json';
 
 module.exports = function(source, sourceMap) {
 	const fileName = this.resourcePath;
-	const ext = path.extname(fileName);
+	const formatExt = path.extname(fileName);
+
+	// There can be double ext, ie. file.css.json
+	const strippedFileName = path.basename(fileName, formatExt);
+	const optionalSecondExt = path.extname(strippedFileName);
+
 	let outputSource;
 	let value;
 
-	if (ext === JSON_EXT) {
+	if (formatExt === JSON_EXT) {
 		value = typeof source === "string" ? JSON.parse(source) : source;
-		outputSource = JSON.stringify(value);
+		outputSource = `module.exports = ${JSON.stringify(value)}`
 
 	} else {
-		value = source;
+		value = source.trim();
 		outputSource = value;
 	}
 
 	// Remove the extension, will be .css / .scss  / .styl etc...
 	// now to be picked up by other loaders
-	const extRegExp = new RegExp(ext + '$');
-	const cssFileName = this.resourcePath.replace(extRegExp, '.css');
+	const extRegExp = new RegExp(optionalSecondExt + formatExt + '$');
+	const cssFileName = fileName.replace(extRegExp, '.css');
 
 	this.cacheable && this.cacheable();
 	this.value = [ value ];
