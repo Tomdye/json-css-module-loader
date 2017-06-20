@@ -29,7 +29,7 @@ module.exports = function(source, sourceMap) {
 	this.cacheable && this.cacheable();
 	this.value = [ value ];
 
-	var output = `require('${cssFileName}');\n${outputSource};`;
+	var output = `require('${cssFileName.replace(/\\/g, '/')}');\n${outputSource};`;
 
 	return output;
 }
